@@ -1,0 +1,20 @@
+{
+  "name": "tzdata-history",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "download": "node src/download.mjs",
+    "extract": "node src/extract.mjs",
+    "census": "node src/census.mjs",
+    "recover": "node src/census.mjs --recover",
+    "all": "npm run download && npm run extract && npm run census"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "undici": "^7.29.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
