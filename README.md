@@ -1,5 +1,7 @@
 # A Study of the URL Sources Cited by the IANA Time Zone Database
 
+> This is the accompanying repo for my article about the IANA Time Zone Database - and the digital preservation of these historical datasets - here: https://javascript.plainenglish.io/a-study-of-the-public-urls-cited-by-the-iana-time-zone-database-3c8bff331dd7. Read it for more details.
+
 This project extracts URLs from comments in the [IANA Time Zone Database](https://www.iana.org/time-zones) and checks whether those URLs are still accessible.
 
 The current run covers 1,327 unique URLs cited in tzdata comments. Each URL is tried directly first. URLs that fail because of access restrictions or network errors can be retried through Bright Data Web Unlocker. URLs returning HTTP 404 or 410 are checked against the Internet Archive.
@@ -88,25 +90,7 @@ data/link-report-with-unlocker.md
 
 It does not modify the direct census. Subsequent runs skip URLs that already have an Unlocker result.
 
-## Results
-
-The final counts are:
-
-| Result                                  |      URLs |    Share |
-| --------------------------------------- | --------: | -------: |
-| Accessible directly                     |       663 |    50.0% |
-| Accessible through Web Unlocker         |       433 |    32.6% |
-| Available from the Internet Archive     |       123 |     9.3% |
-| No archive copy                         |        57 |     4.3% |
-| Still inaccessible through Web Unlocker |        39 |     2.9% |
-| Other HTTP errors                       |        12 |     0.9% |
-| **Total**                               | **1,327** | **100%** |
-
-The 123 Wayback results are limited to URLs that returned HTTP 404 or 410 from the original host. Blocked and unreachable URLs are not sent to the Wayback API by the default recovery logic.
-
 ## Output
-
-Committed output:
 
 * `data/citations.json` — citation occurrences
 * `data/link-report.json` — direct census and Wayback results
