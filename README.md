@@ -41,7 +41,7 @@ The most frequently cited hosts include:
 * Fiji government site — 13
 * `adilet.zan.kz` — 12
 
-## Describing this Pipeline
+## About this Pipeline
 
 There are three main commands:
 
