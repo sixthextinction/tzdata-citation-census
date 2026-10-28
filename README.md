@@ -84,7 +84,7 @@ data/link-report-with-unlocker.json
 data/link-report-with-unlocker.md
 ```
 
-This does not modify the direct census. Subsequent runs skip URLs that already have an Unlocker result.
+...but does not modify the direct census. Subsequent runs will skip URLs that already have an Unlocker result.
 
 ## Output Saved To...
 
