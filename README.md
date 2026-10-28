@@ -4,24 +4,26 @@
 
 This project extracts URLs from comments in the [IANA Time Zone Database](https://www.iana.org/time-zones) and checks whether those URLs are still accessible.
 
-The current run covers 1,327 unique URLs cited in tzdata comments. Each URL is tried directly first. URLs that fail because of access restrictions or network errors can be retried through Bright Data Web Unlocker. URLs returning HTTP 404 or 410 are checked against the Internet Archive.
+It covers 1,327 unique URLs cited in tzdata comments. Each URL is tried directly first, and any that fail because of access restrictions or network errors are retried through a proxy layer (here: Bright Data Web Unlocker.)
 
-The current results:
+Any returning HTTP 404 or 410 are checked against the Internet Archive instead.
+
+## Results as of last run
 
 * 663 URLs work directly
 * 433 can only be accessed using a proxy like Bright Data's Web Unlocker
-* 123 URLs were dead, but I could find an Internet Archive copy
-* 57 had no archive copy
+* 123 URLs were dead, but I could find an Internet Archive copy 🎉
+* 57 had no archive copy 
 * 39 still fail, even using Web Unlocker
 * 12 return other HTTP errors (mostly 500)
 
-That leaves 1,219 of 1,327 URLs (91.9%) that can currently be retrieved.
+This leaves 1,219 of 1,327 URLs (91.9%) that can currently be retrieved.
 
 ## Data
 
-The project downloads nine tzdata source files from a pinned `eggert/tz` commit: `9b754dca34242956926c3a94c70832acc6d72d88`
+This project downloads nine tzdata source files from a pinned [eggert/tz](https://github.com/eggert/tz) commit: `9b754dca34242956926c3a94c70832acc6d72d88`
 
-The extraction step found:
+Important bits found after extraction:
 
 * 1,609 comment blocks
 * 1,352 citation occurrences
@@ -39,21 +41,15 @@ The most frequently cited hosts include:
 * Fiji government site — 13
 * `adilet.zan.kz` — 12
 
-## Pipeline
+## Describing this Pipeline
 
 There are three main commands:
 
 ```bash
-npm run download
-npm run extract
-npm run census
+npm run download #  fetches the pinned tzdata files.
+npm run extract  #  splits comments into blocks and extracts the URLs and attribution information. 
+npm run census   #  makes the direct HTTP requests, saves response bodies where possible, and checks HTTP 404/410 responses against the Internet Archive.
 ```
-
-`download` fetches the pinned tzdata files.
-
-`extract` splits comments into blocks and extracts the URLs and attribution information.
-
-`census` makes the direct HTTP requests, saves response bodies where possible, and checks HTTP 404/410 responses against the Internet Archive.
 
 Run the complete pipeline with:
 
@@ -61,7 +57,7 @@ Run the complete pipeline with:
 npm run all
 ```
 
-The direct census can resume from `data/link-report.json` if interrupted.
+We save to `data/link-report.json` periodically for resuming interrupted downloads.
 
 ### Internet Archive recovery
 
@@ -88,9 +84,9 @@ data/link-report-with-unlocker.json
 data/link-report-with-unlocker.md
 ```
 
-It does not modify the direct census. Subsequent runs skip URLs that already have an Unlocker result.
+This does not modify the direct census. Subsequent runs skip URLs that already have an Unlocker result.
 
-## Output
+## Output Saved To...
 
 * `data/citations.json` — citation occurrences
 * `data/link-report.json` — direct census and Wayback results
@@ -105,16 +101,16 @@ Generated locally and not committed:
 * `data/snapshots/` — saved response bodies
 * `data/tz/` — downloaded tzdata files
 
-## Options
+## CLI Options
 
 | Command              | Flag                 | Description                         |
 | -------------------- | -------------------- | ----------------------------------- |
-| `extract`            | `--region africa`    | Process one source file             |
+| `extract`            | `--region africa`    | Process a source file               |
 | `census`             | `--sample 60`        | Run against a random sample         |
 | `census`             | `--seed 7`           | Set the sample seed                 |
 | `census`             | `--concurrency 8`    | Number of concurrent requests       |
 | `census`             | `--live-only`        | Skip Wayback recovery               |
-| `census` / `recover` | `--recover`          | Run only Wayback recovery           |
+| `census` / `recover` | `--recover`          | Run ONLY Wayback recovery           |
 | `census`             | `--wayback-gap 1200` | Delay between Wayback requests      |
 | `census`             | `--unlock`           | Retry failures through Web Unlocker |
 
@@ -124,7 +120,7 @@ Delete `data/link-report-with-unlocker.json` to start the Unlocker pass again.
 
 ## Credentials
 
-The default pipeline does not require credentials.
+The default pipeline does not require any credentials.
 
 For Web Unlocker, copy `.env.example` to `.env` and set:
 
@@ -132,7 +128,7 @@ For Web Unlocker, copy `.env.example` to `.env` and set:
 BRIGHT_DATA_UNLOCKER_AUTH=brd-customer-XXXXX-zone-web_unlocker:PASSWORD
 ```
 
-The native Web Unlocker proxy is used. Do not add `-render` to the zone name.
+> IMPORTANT: Do NOT add `-render` to the zone name.
 
 The proxy host and port can also be configured:
 
@@ -142,9 +138,3 @@ BRIGHT_DATA_UNLOCKER_PROXY_PORT=44445
 ```
 
 Both default to the values above if omitted.
-
-## Requirements
-
-* Node.js 22+
-* Internet access
-* Bright Data credentials only for the `--unlock` pass
